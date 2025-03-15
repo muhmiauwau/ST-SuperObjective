@@ -59,7 +59,7 @@ Your imagination is the limit! You can give the AI any objective you wish, and i
 
 - Maintains a configurable list of recently completed tasks
 - Automatically adds tasks when marked complete
-- Control how many completed tasks are included in the prompt (1-10)
+- Control how many completed tasks are included in the prompt
 - View completed tasks in a dedicated popup
 - Purge tasks when no longer needed
 - Enable/disable including completed tasks in the prompt
@@ -68,7 +68,7 @@ Your imagination is the limit! You can give the AI any objective you wish, and i
 
 - Automatically identifies and tracks tasks that follow the current task
 - Prioritizes tasks in the same parent container as the current task
-- Control how many upcoming tasks are included in the prompt (1-10)
+- Control how many upcoming tasks are included in the prompt
 - View upcoming tasks in a dedicated popup
 - Purge tasks when no longer needed
 - Enable/disable including upcoming tasks in the prompt
