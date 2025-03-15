@@ -13,7 +13,7 @@ This differs from static prompting by adding sequential and paced directives for
 Before you begin, ensure you've met the following prerequisites:
 
 - Make sure you're on the latest version of SillyTavern
-- Install the ST-SuperObjective extension using this link and the "Install extension" button on the extensions panel.
+- Install the ST-SuperObjective extension using this link: https://github.com/ForgottenGlory/ST-SuperObjective.git and the "Install extension" button on the extensions panel.
 
 ## Common Use Cases
 
