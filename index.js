@@ -15,7 +15,7 @@ import { callGenericPopup, Popup, POPUP_TYPE } from '../../../popup.js';
 import { SlashCommandParser } from '../../../slash-commands/SlashCommandParser.js';
 import { SlashCommand } from '../../../slash-commands/SlashCommand.js';
 
-const MODULE_NAME = 'Objective';
+const MODULE_NAME = 'SuperObjective';
 
 
 let taskTree = null;
