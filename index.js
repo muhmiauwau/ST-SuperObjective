@@ -1076,6 +1076,9 @@ function updateUiTaskList() {
         } else {
             $('#objective-parent').hide();
         }
+    } else {
+        // If no current objective, hide the parent button
+        $('#objective-parent').hide();
     }
 
     // Add progress bar
@@ -1333,6 +1336,12 @@ function loadSettings() {
     // Update UI elements
     $('#objective-counter').text(checkCounter);
     $('#objective-text').text(taskTree.description);
+
+    // Ensure parent button is hidden when at root objective
+    if (!currentObjective || !currentObjective.parentId || currentObjective.parentId === '') {
+        $('#objective-parent').hide();
+    }
+
     updateUiTaskList();
     $('#objective-chat-depth').val(chat_metadata['objective'].chatDepth);
     $('#objective-check-frequency').val(chat_metadata['objective'].checkFrequency);
@@ -2360,6 +2369,10 @@ jQuery(async () => {
     addManualTaskCheckUi();
     const getContainer = () => $(document.getElementById('objective_container') ?? document.getElementById('extensions_settings'));
     getContainer().append(settingsHtml);
+
+    // Ensure the title is set correctly
+    $('[data-i18n="ext_obj_title"]').text('SuperObjective');
+
     $(document).on('click', '#objective-generate', onGenerateObjectiveClick);
     $(document).on('click', '#objective-generate-more', onGenerateAdditionalTasksClick);
     $(document).on('input', '#objective-chat-depth', onChatDepthInput);
@@ -2381,7 +2394,10 @@ jQuery(async () => {
         doPopout(e);
         e.stopPropagation();
     });
+
+    // Ensure parent button is hidden on first load
     $('#objective-parent').hide();
+
     loadSettings();
 
     eventSource.on(event_types.CHAT_CHANGED, () => {

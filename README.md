@@ -26,7 +26,7 @@ Your imagination is the limit! You can give the AI any objective you wish, and i
 
 ## Getting Started
 
-1. Open the Extensions menu and select Objective
+1. Open the Extensions menu and select SuperObjective
 2. Type an objective into the top text box
 3. Click "Auto-Generate Tasks" to have the AI create a task list
 4. Watch as the AI works through the tasks automatically
