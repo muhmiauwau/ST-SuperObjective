@@ -2362,16 +2362,13 @@ function showRecentlyCompletedTasks() {
 }
 
 jQuery(async () => {
-    const settingsHtml = await renderExtensionTemplateAsync('third-party/Extension-Objective', 'settings');
+    const settingsHtml = await renderExtensionTemplateAsync('third-party/ST-SuperObjective', 'settings');
 
     // CSS styles are now defined in style.css
 
     addManualTaskCheckUi();
     const getContainer = () => $(document.getElementById('objective_container') ?? document.getElementById('extensions_settings'));
     getContainer().append(settingsHtml);
-
-    // Ensure the title is set correctly
-    $('[data-i18n="ext_obj_title"]').text('SuperObjective');
 
     $(document).on('click', '#objective-generate', onGenerateObjectiveClick);
     $(document).on('click', '#objective-generate-more', onGenerateAdditionalTasksClick);
