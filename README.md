@@ -1,4 +1,4 @@
-# SuperObjective
+# SillyTavern-SuperObjective
 
 ## What is it?
 
