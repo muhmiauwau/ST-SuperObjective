@@ -88,7 +88,7 @@ Your imagination is the limit! You can give the AI any objective you wish, and i
 - Purge tasks when no longer needed
 - Enable/disable including upcoming tasks in the prompt
 
-### Tasks, Templates, and Prompts and Import/Export
+### Tasks, Templates, and Prompts Import/Export
 
 - **Task Templates**: Save and load reusable task structures
 - **Export Tasks**: Save your current tasks to a JSON file
