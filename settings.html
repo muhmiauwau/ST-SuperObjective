@@ -41,7 +41,31 @@
                         <small>(0 = disabled)</small>
                     </div>
                 </div>
+
+
+                <div class="objective_block_control flex-container alignitemscenter marginBottom10">
+                    <label class="checkbox_label"><input id="objective-swipes-decrement" type="checkbox">Count swipes
+                        toward task check frequency</label>
+                </div>
+
                 <span> Messages until next AI task completion check <span id="objective-counter">0</span></span>
+
+                <div class="objective_block objective_block_control flex1 marginBottom10">
+                    <label for="objective-injection-frequency">Task Injection Frequency</label>
+                    <input id="objective-injection-frequency" class="text_pole widthUnset" type="number" min="1"
+                        max="99" value="1" />
+                    <small>(messages between task injections)</small>
+                </div>
+
+                <div class="objective_block objective_block_control flex1 marginBottom10">
+                    <label for="objective-prompt-role">Task Prompt Role</label>
+                    <select id="objective-prompt-role" class="text_pole">
+                        <option value="assistant">Assistant</option>
+                        <option value="user">User</option>
+                        <option value="system">System</option>
+                    </select>
+                    <small>(how tasks are injected into the context)</small>
+                </div>
 
                 <!-- Recently completed tasks settings -->
                 <div class="objective_block marginTop10">
@@ -75,7 +99,7 @@
 
                 <!-- Task management buttons -->
                 <div class="objective_block flex-container flexWrap">
-                    <input id="objective_prompt_edit" class="menu_button" type="submit" value="Edit Prompts" />
+                    <input id="objective_prompt_edit" class="menu_button" type="submit" value="Manage Prompts" />
                     <input id="objective_templates" class="menu_button" type="submit" value="Manage Templates" />
                 </div>
 

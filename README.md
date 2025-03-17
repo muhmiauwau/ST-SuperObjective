@@ -96,6 +96,8 @@ Your imagination is the limit! You can give the AI any objective you wish, and i
 
 - **Position in Chat**: Controls how prominently the task appears in the AI's context 
 - **Task Check Frequency**: How often the AI checks if a task is complete (3 default, 0 disables)
+- **Count Swipes Toward Task Check**: Option to include or exclude message swipes from decrementing the task check counter (disabled by default)
+- **Task Injection Frequency**: Controls how often task information is injected into the AI's context (1 default, meaning every message)
 - **Hide Tasks**: Option to hide the task list for a more mysterious experience
 
 ### Advanced Settings
