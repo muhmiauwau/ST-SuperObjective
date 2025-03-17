@@ -4,6 +4,8 @@
 
 ## What is it?
 
+A major expansion and partial rewrite of the original SillyTavern [Objective](https://docs.sillytavern.app/extensions/objective/) extension.
+
 The SuperObjective extension lets you specify an objective for the AI to strive towards during your chat. This objective is broken down into step-by-step tasks that can be organized in a hierarchical structure. Tasks may be branched, where child tasks can be created automatically or manually, giving you the ability to create complex task trees.
 
 This differs from static prompting by adding sequential and paced directives for the AI to follow without user intervention, creating a more genuine experience of the AI autonomously working toward a goal.
