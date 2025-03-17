@@ -40,7 +40,7 @@ Your imagination is the limit! You can give the AI any objective you wish, and i
 - **Task Hierarchy**: Create parent/child relationships between tasks
 - **Manual Task Creation**: Add your own tasks at any position
 - **Task Editing**: Modify task descriptions at any time
-- **Task Movement**: Reorder tasks using up/down buttons
+- **Task Movement**: Reorder tasks using drag-and-drop functionality
 - **Task Deletion**: Remove tasks with the delete button
 
 ### Task Progress Visualization
@@ -57,12 +57,23 @@ Your imagination is the limit! You can give the AI any objective you wish, and i
 - Manual task check via the Extras menu
 - Parent tasks auto-complete when all children are done
 
+### Task Role Configuration
+
+- **Task Role Selection**: Choose how tasks are injected into the prompt (Assistant, User, or System messages)
+- Works with both chat completion and text completion APIs
+
+### Task Duration Feature
+
+- **Task Duration**: Set a minimum number of messages before a task can auto-complete
+- Visual feedback shows progress toward duration requirement (yellow means duration is in progress, green means duration has elapsed)
+- Manual task completion remains available regardless of duration setting
+
 ### Recently Completed Tasks
 
 - Maintains a configurable list of recently completed tasks
 - Automatically adds tasks when marked complete
 - Control how many completed tasks are included in the prompt
-- View completed tasks in a dedicated popup
+- View completed tasks in a dedicated popup with enhanced UI
 - Purge tasks when no longer needed
 - Enable/disable including completed tasks in the prompt
 
@@ -71,16 +82,17 @@ Your imagination is the limit! You can give the AI any objective you wish, and i
 - Automatically identifies and tracks tasks that follow the current task
 - Prioritizes tasks in the same parent container as the current task
 - Control how many upcoming tasks are included in the prompt
-- View upcoming tasks in a dedicated popup
+- View upcoming tasks in a dedicated popup with enhanced UI
 - Purge tasks when no longer needed
 - Enable/disable including upcoming tasks in the prompt
 
-### Templates and Import/Export
+### Tasks, Templates, and Prompts and Import/Export
 
 - **Task Templates**: Save and load reusable task structures
 - **Export Tasks**: Save your current tasks to a JSON file
 - **Import Tasks**: Load tasks from a previously exported file
 - **Template Management**: Preview, rename, and delete templates
+- **Prompt Sets Export/Import**: Export and import custom prompt sets with custom filenames
 
 ### Statistics and History
 
@@ -114,6 +126,14 @@ The current task will always be the first listed incomplete task. Any updates to
 ### Branch Tasks
 
 Click the Branch Task button to set the current task as an objective where you can generate or manually create child tasks. You can continue to turn any child task into an objective to create deeper hierarchies.
+
+### Task Duration
+
+Click the clock icon on a task to set a minimum number of messages that must pass before the task can be automatically completed. This is useful for tasks that require extended conversation.
+
+### Task Role Selection
+
+Use the dropdown menu on each task to determine how it's injected into the prompt - as Assistant, User, or System messages. This works with both chat completion and text completion APIs.
 
 ### Hiding Tasks
 
