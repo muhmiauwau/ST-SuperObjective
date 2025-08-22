@@ -28,6 +28,17 @@
                 <!-- Filter and sort controls will be inserted here by JavaScript -->
 
                 <div id="objective-tasks"> </div>
+
+                <!-- superobjective-style settings toggle button (superobjectiveSettingsBlockToggle) -->
+                <div class="superobjective_contents_controls">
+                    <div id="superobjectiveSettingsBlockToggle" class="menu_button menu_button_icon" title="Edit settings">
+                        <i class="fa-solid fa-cog"></i>
+                        <span>Settings</span>
+                    </div>
+                </div>
+
+                <!-- Advanced settings hidden by default; toggled by superobjectiveSettingsBlockToggle -->
+                <div id="superobjectiveSettingsBlock" style="display: none;">
                 <div class="objective_block marginBottom10">
                     <div class="objective_block objective_block_control flex1 flexFlowColumn">
                         <label for="objective-chat-depth">Position in Chat</label>
@@ -109,6 +120,8 @@
                     <input id="objective_import" class="menu_button" type="submit" value="Import Tasks" />
                     <input id="objective_statistics" class="menu_button" type="submit" value="Statistics" />
                 </div>
+
+                </div> <!-- #objective-advanced-settings -->
 
                 <hr class="sysHR">
             </div>

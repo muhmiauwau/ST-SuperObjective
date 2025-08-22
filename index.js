@@ -1684,7 +1684,7 @@ function loadSettings() {
     // Load/Init settings for chatId
     currentChatId = getContext().chatId;
 
-    // Reset Objectives and Tasks in memory
+    // Reset Objectives and Tasks in superobjective
     taskTree = null;
     currentObjective = null;
 
@@ -2941,6 +2941,18 @@ jQuery(async () => {
     $(document).on('click', '#objectiveExtensionPopoutButton', function (e) {
         doPopout(e);
         e.stopPropagation();
+    });
+
+    // Toggle superobjective settings block like the Summarize extension
+    $(document).on('click', '#superobjectiveSettingsBlockToggle', function (e) {
+        const container = $('#superobjectiveSettingsBlock');
+        if (container.is(':visible')) {
+            container.slideUp(150);
+            $(this).removeClass('active');
+        } else {
+            container.slideDown(150);
+            $(this).addClass('active');
+        }
     });
 
     // Ensure parent button is hidden on first load
