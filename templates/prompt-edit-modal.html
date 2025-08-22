@@ -1,0 +1,32 @@
+<div class="objective_prompt_modal">
+    <div class="objective_prompt_block justifyCenter">
+        <label for="objective-custom-prompt-select">Custom Prompt Select</label>
+        <select id="objective-custom-prompt-select" class="text_pole"></select>
+    </div>
+    <div class="objective_prompt_block justifyCenter">
+        <input id="objective-custom-prompt-new" class="menu_button" type="submit" value="New Prompt" />
+        <input id="objective-custom-prompt-save" class="menu_button" type="submit" value="Update Prompt" />
+        <input id="objective-custom-prompt-delete" class="menu_button" type="submit" value="Delete Prompt" />
+    </div>
+    <div class="objective_prompt_block justifyCenter">
+        <input id="objective-custom-prompt-export" class="menu_button" type="submit" value="Export Selected Prompt" />
+        <input id="objective-custom-prompt-import" class="menu_button" type="submit" value="Import Prompts" />
+    </div>
+    <hr class="m-t-1 m-b-1">
+    <small>Edit prompts used by Objective for this session. You can use {{objective}} or {{task}} plus any other standard template variables. Save template to persist changes.</small>
+    <hr class="m-t-1 m-b-1">
+    <div>
+        <label for="objective-prompt-generate">Generation Prompt</label>
+        <textarea id="objective-prompt-generate" type="text" class="text_pole textarea_compact" rows="6"></textarea>
+        <label for="objective-prompt-additional">Additional Tasks Prompt</label>
+        <textarea id="objective-prompt-additional" type="text" class="text_pole textarea_compact" rows="6"></textarea>
+        <label for="objective-prompt-check">Completion Check Prompt</label>
+        <textarea id="objective-prompt-check" type="text" class="text_pole textarea_compact" rows="6"></textarea>
+        <label for="objective-prompt-extension-prompt">Injected Prompt</label>
+        <textarea id="objective-prompt-extension-prompt" type="text" class="text_pole textarea_compact" rows="6"></textarea>
+        <label for="objective-prompt-completed-tasks">Completed Tasks Prompt</label>
+        <textarea id="objective-prompt-completed-tasks" type="text" class="text_pole textarea_compact" rows="6"></textarea>
+        <label for="objective-prompt-upcoming-tasks">Upcoming Tasks Prompt</label>
+        <textarea id="objective-prompt-upcoming-tasks" type="text" class="text_pole textarea_compact" rows="6"></textarea>
+    </div>
+</div>

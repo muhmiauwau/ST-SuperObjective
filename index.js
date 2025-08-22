@@ -15,7 +15,8 @@ import { callGenericPopup, Popup, POPUP_TYPE } from '../../../popup.js';
 import { SlashCommandParser } from '../../../slash-commands/SlashCommandParser.js';
 import { SlashCommand } from '../../../slash-commands/SlashCommand.js';
 
-const MODULE_NAME = 'SuperObjective';
+const MODULE_NAME = 'ST-SuperObjective';
+const Ext_MODULE_NAME = 'third-party/ST-SuperObjective';
 
 
 
@@ -647,24 +648,16 @@ class ObjectiveTask {
     }
 
     // Add a single task to the UI and attach event listeners for user edits
-    addUiElement() {
-        // Use template string, assign ids to elements for later reference
-        const template = `
-        <div id="objective-task-item-${this.id}" class="objective-task-item">
-            <div id="objective-task-label-${this.id}" class="flex1 checkbox_label alignItemsCenter">
-                <div id="objective-task-drag-${this.id}" class="objective-task-button fa-solid fa-grip-vertical fa-fw fa-lg" title="Drag to reorder"></div>
-                <input id="objective-task-complete-${this.id}" type="checkbox" ${this.completed ? 'checked' : ''}>
-                <span id="objective-task-description-${this.id}" class="text_pole objective-task" contenteditable="true">${this.description}</span>
-                <div id="objective-task-delete-${this.id}" class="objective-task-button fa-solid fa-xmark fa-fw fa-lg" title="Delete Task"></div>
-                <div id="objective-task-add-${this.id}" class="objective-task-button fa-solid fa-plus fa-fw fa-lg" title="Add Task"></div>
-                <div id="objective-task-add-branch-${this.id}" class="objective-task-button fa-solid fa-code-fork fa-fw fa-lg" title="Branch Task"></div>
-                <div id="objective-task-duration-${this.id}" class="objective-task-button fa-solid fa-clock fa-fw fa-lg" title="Task Duration Settings"></div>
-            </div>
-        </div>
-        `;
+    async addUiElement() {
+        // Use SillyTavern template engine with data
+        const templateHtml = await renderExtensionTemplateAsync(Ext_MODULE_NAME, 'templates/task-item', {
+            id: this.id,
+            description: this.description,
+            completed: this.completed
+        });
 
         // Add the filled out template
-        $('#objective-tasks').append(template);
+        $('#objective-tasks').append(templateHtml);
 
         this.completedCheckbox = $(`#objective-task-complete-${this.id}`);
         this.descriptionSpan = $(`#objective-task-description-${this.id}`);
@@ -837,32 +830,18 @@ class ObjectiveTask {
         saveState();
     }
 
-    onDurationClick() {
+    async onDurationClick() {
         // Store task reference for use in event handlers
         const task = this;
 
-        // Create the popup HTML
-        const popupContent = `
-        <div class="objective_duration_modal">
-            <h4>Task Duration Settings</h4>
-            <div class="objective_block objective_block_control marginBottom10">
-                <label for="task-duration-value-${this.id}">Minimum messages before auto-completion:</label>
-                <input id="task-duration-value-${this.id}" type="number" min="0" max="50" value="${this.duration}" class="text_pole widthUnset">
-                <small>(0 = no delay)</small>
-            </div>
-            ${this.duration > 0 ? `
-            <div class="objective_block marginBottom10" id="task-duration-progress-${this.id}">
-                <strong>Current progress:</strong> ${this.elapsedMessages}/${this.duration} messages
-                ${this.elapsedMessages >= this.duration ? '<span class="task-duration-progress-complete"> (Complete)</span>' : ''}
-            </div>
-            ` : ''}
-            ${this.duration > 0 ? `
-            <div class="objective_block flex-container flexWrap">
-                <input id="task-duration-reset-${this.id}" class="menu_button" type="button" value="Reset Progress">
-            </div>
-            ` : ''}
-        </div>
-        `;
+        // Use SillyTavern template engine with data
+        const popupContent = await renderExtensionTemplateAsync(Ext_MODULE_NAME, 'templates/duration-modal', {
+            id: this.id,
+            duration: this.duration,
+            elapsedMessages: this.elapsedMessages,
+            hasDuration: this.duration > 0,
+            isComplete: this.elapsedMessages >= this.duration
+        });
 
         // Function to save the duration value
         const saveDuration = function () {
@@ -946,41 +925,8 @@ class ObjectiveTask {
 //#       Custom Prompts        #//
 //###############################//
 
-function onEditPromptClick() {
-    let popupText = '';
-    popupText += `
-    <div class="objective_prompt_modal">
-        <div class="objective_prompt_block justifyCenter">
-            <label for="objective-custom-prompt-select">Custom Prompt Select</label>
-            <select id="objective-custom-prompt-select" class="text_pole"><select>
-        </div>
-        <div class="objective_prompt_block justifyCenter">
-            <input id="objective-custom-prompt-new" class="menu_button" type="submit" value="New Prompt" />
-            <input id="objective-custom-prompt-save" class="menu_button" type="submit" value="Update Prompt" />
-            <input id="objective-custom-prompt-delete" class="menu_button" type="submit" value="Delete Prompt" />
-        </div>
-        <div class="objective_prompt_block justifyCenter">
-            <input id="objective-custom-prompt-export" class="menu_button" type="submit" value="Export Selected Prompt" />
-            <input id="objective-custom-prompt-import" class="menu_button" type="submit" value="Import Prompts" />
-        </div>
-        <hr class="m-t-1 m-b-1">
-        <small>Edit prompts used by Objective for this session. You can use {{objective}} or {{task}} plus any other standard template variables. Save template to persist changes.</small>
-        <hr class="m-t-1 m-b-1">
-        <div>
-            <label for="objective-prompt-generate">Generation Prompt</label>
-            <textarea id="objective-prompt-generate" type="text" class="text_pole textarea_compact" rows="6"></textarea>
-            <label for="objective-prompt-additional">Additional Tasks Prompt</label>
-            <textarea id="objective-prompt-additional" type="text" class="text_pole textarea_compact" rows="6"></textarea>
-            <label for="objective-prompt-check">Completion Check Prompt</label>
-            <textarea id="objective-prompt-check" type="text" class="text_pole textarea_compact" rows="6"></textarea>
-            <label for="objective-prompt-extension-prompt">Injected Prompt</label>
-            <textarea id="objective-prompt-extension-prompt" type="text" class="text_pole textarea_compact" rows="6"></textarea>
-            <label for="objective-prompt-completed-tasks">Completed Tasks Prompt</label>
-            <textarea id="objective-prompt-completed-tasks" type="text" class="text_pole textarea_compact" rows="6"></textarea>
-            <label for="objective-prompt-upcoming-tasks">Upcoming Tasks Prompt</label>
-            <textarea id="objective-prompt-upcoming-tasks" type="text" class="text_pole textarea_compact" rows="6"></textarea>
-        </div>
-    </div>`;
+async function onEditPromptClick() {
+    const popupText = await renderExtensionTemplateAsync(Ext_MODULE_NAME, 'templates/prompt-edit-modal');
     callGenericPopup(popupText, POPUP_TYPE.TEXT, '', { allowVerticalScrolling: true, wide: true });
     populateCustomPrompts(selectedCustomPrompt);
 
@@ -1903,24 +1849,16 @@ function loadSettings() {
     loadUIState();
 }
 
-function addManualTaskCheckUi() {
+async function addManualTaskCheckUi() {
     const getWandContainer = () => $(document.getElementById('objective_wand_container') ?? document.getElementById('extensionsMenu'));
     const container = getWandContainer();
-    container.append(`
-        <div id="objective-task-manual-check-menu-item" class="list-group-item flex-container flexGap5">
-            <div id="objective-task-manual-check" class="extensionsMenuExtensionButton fa-regular fa-square-check"/></div>
-            Manual Task Check
-        </div>`);
-    container.append(`
-        <div id="objective-task-complete-current-menu-item" class="list-group-item flex-container flexGap5">
-            <div id="objective-task-complete-current" class="extensionsMenuExtensionButton fa-regular fa-list-check"/></div>
-            Complete Current Task
-        </div>`);
+    const menuItemsHtml = await renderExtensionTemplateAsync(Ext_MODULE_NAME, 'templates/manual-task-check-ui');
+    container.append(menuItemsHtml);
     $('#objective-task-manual-check-menu-item').attr('title', 'Trigger AI check of completed tasks').on('click', checkTaskCompleted);
     $('#objective-task-complete-current-menu-item').attr('title', 'Mark the current task as completed.').on('click', markTaskCompleted);
 }
 
-function doPopout(e) {
+async function doPopout(e) {
     const target = e.target;
 
     //repurposes the zoomed avatar template to server as a floating div
@@ -1929,16 +1867,14 @@ function doPopout(e) {
         const originalHTMLClone = $(target).parent().parent().parent().find('.inline-drawer-content').html();
         const originalElement = $(target).parent().parent().parent().find('.inline-drawer-content');
         const template = $('#zoomed_avatar_template').html();
-        const controlBarHtml = `<div class="panelControlBar flex-container">
-        <div id="objectiveExtensionPopoutheader" class="fa-solid fa-grip drag-grabber hoverglow"></div>
-        <div id="objectiveExtensionPopoutClose" class="fa-solid fa-circle-xmark hoverglow dragClose"></div>
-    </div>`;
+        const controlBarHtml = await renderExtensionTemplateAsync(Ext_MODULE_NAME, 'templates/popout-control-bar');
+        const placeholderHtml = await renderExtensionTemplateAsync(Ext_MODULE_NAME, 'templates/popout-placeholder');
         const newElement = $(template);
         newElement.attr('id', 'objectiveExtensionPopout')
             .removeClass('zoomed_avatar')
             .addClass('draggable')
             .empty();
-        originalElement.html('<div class="flex-container alignitemscenter justifyCenter wide100p"><small>Currently popped out</small></div>');
+        originalElement.html(placeholderHtml);
         newElement.append(controlBarHtml).append(originalHTMLClone);
         $('#movingDivs').append(newElement);
         $('#objectiveExtensionDrawerContents').addClass('scrollY');
@@ -1971,30 +1907,8 @@ function doPopout(e) {
 }
 
 // Add template management UI
-function onManageTemplatesClick() {
-    let popupText = '';
-    popupText += `
-    <div class="objective_templates_modal">
-        <div class="objective_prompt_block justifyCenter">
-            <label for="objective-template-select">Task Templates</label>
-            <select id="objective-template-select" class="text_pole"><select>
-        </div>
-        <div class="objective_prompt_block justifyCenter">
-            <input id="objective-template-save" class="menu_button" type="submit" value="Save Current Tasks as Template" />
-            <input id="objective-template-load" class="menu_button" type="submit" value="Load Template" />
-            <input id="objective-template-delete" class="menu_button" type="submit" value="Delete Template" />
-        </div>
-        <div class="objective_prompt_block justifyCenter">
-            <input id="objective-template-export" class="menu_button" type="submit" value="Export Selected Template" />
-            <input id="objective-template-import" class="menu_button" type="submit" value="Import Templates" />
-        </div>
-        <hr class="m-t-1 m-b-1">
-        <small>Save your current task structure as a template to reuse later. Templates include all tasks and subtasks but not their completion status.</small>
-        <hr class="m-t-1 m-b-1">
-        <div id="objective-template-preview" class="objective_template_preview">
-            <p>Select a template to preview</p>
-        </div>
-    </div>`;
+async function onManageTemplatesClick() {
+    const popupText = await renderExtensionTemplateAsync(Ext_MODULE_NAME, 'templates/template-management-modal');
 
     callGenericPopup(popupText, POPUP_TYPE.TEXT, '', { allowVerticalScrolling: true, wide: true });
     populateTemplateSelect();
@@ -2303,7 +2217,7 @@ function updateStatistics(taskCompleted = false) {
 }
 
 // Show task statistics
-function showStatistics() {
+async function showStatistics() {
     // Initialize chat-specific statistics if they don't exist
     if (!chat_metadata.objective.statistics) {
         chat_metadata.objective.statistics = {
@@ -2349,66 +2263,24 @@ function showStatistics() {
         globalLastCompletionText = globalLastDate.toLocaleString();
     }
 
-    // Create statistics popup
-    const popupText = `
-    <div class="objective_statistics_modal">
-        <h3 class="stats-header">Task Statistics</h3>
-        
-        <div class="stats-container">
-            <div class="stats-section justifyCenter">
-                <h4 class="stats-section-header">Current Objective</h4>
-                <div class="stats-grid">
-                    <div class="stats-label">Total Tasks:</div>
-                    <div class="stats-value">${totalTasks}</div>
-                    
-                    <div class="stats-label">Completed Tasks:</div>
-                    <div class="stats-value">${completedTasks}</div>
-                    
-                    <div class="stats-label">Completion Rate:</div>
-                    <div class="stats-value">${completionRate}%</div>
-                </div>
-            </div>
-            
-            <div class="stats-section justifyCenter">
-                <h4 class="stats-section-header">Current Chat Statistics</h4>
-                <div class="stats-grid">
-                    <div class="stats-label">Tasks Completed:</div>
-                    <div class="stats-value">${chat_metadata.objective.statistics.tasksCompleted}</div>
-                    
-                    <div class="stats-label">Objectives Completed:</div>
-                    <div class="stats-value">${chat_metadata.objective.statistics.objectivesCompleted}</div>
-                    
-                    <div class="stats-label">Last Completion:</div>
-                    <div class="stats-value">${lastCompletionText}</div>
-                </div>
-            </div>
-            
-            <div class="stats-section justifyCenter">
-                <h4 class="stats-section-header">Global Statistics</h4>
-                <div class="stats-grid">
-                    <div class="stats-label">Total Tasks Completed:</div>
-                    <div class="stats-value">${extension_settings.objective.globalStatistics.tasksCompleted}</div>
-                    
-                    <div class="stats-label">Total Objectives Completed:</div>
-                    <div class="stats-value">${extension_settings.objective.globalStatistics.objectivesCompleted}</div>
-                    
-                    
-                    <div class="stats-label">Total Tasks Created:</div>
-                    <div class="stats-value">${extension_settings.objective.globalStatistics.tasksCreated}</div>
-                    
-                    <div class="stats-label">Last Completion:</div>
-                    <div class="stats-value">${globalLastCompletionText}</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="stats-section completion-history-section">
-            <h4 class="stats-section-header">Recent Completions</h4>
-            <div class="objective_completion_history">
-                ${generateCompletionHistoryHtml()}
-            </div>
-        </div>
-    </div>`;
+    // Load template and prepare data
+    const popupText = await renderExtensionTemplateAsync(Ext_MODULE_NAME, 'templates/statistics-modal', {
+        totalTasks: totalTasks,
+        completedTasks: completedTasks,
+        completionRate: completionRate,
+        chatStats: {
+            tasksCompleted: chat_metadata.objective.statistics.tasksCompleted,
+            objectivesCompleted: chat_metadata.objective.statistics.objectivesCompleted
+        },
+        lastCompletionText: lastCompletionText,
+        globalStats: {
+            tasksCompleted: extension_settings.objective.globalStatistics.tasksCompleted,
+            objectivesCompleted: extension_settings.objective.globalStatistics.objectivesCompleted,
+            tasksCreated: extension_settings.objective.globalStatistics.tasksCreated
+        },
+        globalLastCompletionText: globalLastCompletionText,
+        completionHistoryHtml: generateCompletionHistoryHtml()
+    });
 
     callGenericPopup(popupText, POPUP_TYPE.TEXT, '', { allowVerticalScrolling: true, wider: true });
 }
@@ -2873,48 +2745,22 @@ async function onPurgeCompletedTasksClick() {
 }
 
 // Show recently completed tasks in a popup
-function showRecentlyCompletedTasks() {
+async function showRecentlyCompletedTasks() {
     if (recentlyCompletedTasks.length === 0) {
         toastr.info('No recently completed tasks');
         return;
     }
 
-    let popupText = `
-    <div class="objective_statistics_modal">
-        <h3 class="stats-header">Recently Completed Tasks</h3>
-        
-        <div class="stats-container">
-            <div class="stats-section">
-                <h4 class="stats-section-header">Task History</h4>
-                <p>These tasks are included in the AI's context when "Include completed tasks in prompt" is enabled.</p>
-                
-                <div class="objective_completion_history">
-                    <ul class="objective_history_list">`;
+    // Prepare task data with formatted dates
+    const tasksData = recentlyCompletedTasks.map(task => ({
+        description: task.description,
+        formattedDate: new Date(task.completionDate).toLocaleString()
+    }));
 
-    for (const task of recentlyCompletedTasks) {
-        const date = new Date(task.completionDate);
-        const formattedDate = date.toLocaleString();
-        popupText += `
-                        <li class="objective_history_item">
-                            <div class="objective_history_task">${task.description}</div>
-                            <div class="objective_history_date">Completed: ${formattedDate}</div>
-                        </li>`;
-    }
-
-    popupText += `
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="stats-section">
-                <h4 class="stats-section-header">Actions</h4>
-                <p>Clearing completed tasks will remove them from the prompt context.</p>
-                <div class="flex-container justifyCenter marginTop10">
-                    <button id="recently-completed-tasks-purge" class="menu_button">Purge All Completed Tasks</button>
-                </div>
-            </div>
-        </div>
-    </div>`;
+    // Load template with data
+    const popupText = await renderExtensionTemplateAsync(Ext_MODULE_NAME, 'templates/completed-tasks-modal', {
+        tasks: tasksData
+    });
 
     callGenericPopup(popupText, POPUP_TYPE.TEXT, '', { allowVerticalScrolling: true, wider: true });
 
@@ -2962,14 +2808,11 @@ function onInjectionFrequencyInput() {
 
 // Show person-specific UI only when a chat is active
 function updatePersonContentsVisibility() {
-     deMuh( "updatePersonContentsVisibility", updatePersonContentsVisibility._retries)
     try {
         const context = getContext();
         const chatId = context && context.chatId ? context.chatId : null;
        
         const character = context.characters[context.characterId];
-
-        deMuh(character)
 
         const hasCharacter = !!(context && character);
 
@@ -2986,8 +2829,6 @@ function updatePersonContentsVisibility() {
         );
 
         
-
-        deMuh("updatePersonContentsVisibility",isWelcomeChat, hasCharacter, context)
 
         // If there's no proper chat, no character, or it's the welcome chat, show message
         if (isWelcomeChat || !hasCharacter) {
@@ -3296,45 +3137,21 @@ async function onPurgeUpcomingTasksClick() {
 }
 
 // Show upcoming tasks in a popup
-function showUpcomingTasks() {
+async function showUpcomingTasks() {
     if (upcomingTasks.length === 0) {
         toastr.info('No upcoming tasks');
         return;
     }
 
-    let popupText = `
-    <div class="objective_statistics_modal">
-        <h3 class="stats-header">Upcoming Tasks</h3>
-        
-        <div class="stats-container">
-            <div class="stats-section">
-                <h4 class="stats-section-header">Task Queue</h4>
-                <p>These tasks are included in the AI's context when "Include upcoming tasks in prompt" is enabled.</p>
-                
-                <div class="objective_completion_history">
-                    <ul class="objective_history_list">`;
+    // Prepare task data
+    const tasksData = upcomingTasks.map(task => ({
+        description: task.description
+    }));
 
-    for (const task of upcomingTasks) {
-        popupText += `
-                        <li class="objective_history_item">
-                            <div class="objective_history_task">${task.description}</div>
-                        </li>`;
-    }
-
-    popupText += `
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="stats-section">
-                <h4 class="stats-section-header">Actions</h4>
-                <p>Clearing upcoming tasks will remove them from the prompt context.</p>
-                <div class="flex-container justifyCenter marginTop10">
-                    <button id="upcoming-tasks-purge" class="menu_button">Purge All Upcoming Tasks</button>
-                </div>
-            </div>
-        </div>
-    </div>`;
+    // Load template with data
+    const popupText = await renderExtensionTemplateAsync(Ext_MODULE_NAME, 'templates/upcoming-tasks-modal', {
+        tasks: tasksData
+    });
 
     callGenericPopup(popupText, POPUP_TYPE.TEXT, '', { allowVerticalScrolling: true, wider: true });
 

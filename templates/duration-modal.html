@@ -1,0 +1,19 @@
+<div class="objective_duration_modal">
+    <h4>Task Duration Settings</h4>
+    <div class="objective_block objective_block_control marginBottom10">
+        <label for="task-duration-value-{{id}}">Minimum messages before auto-completion:</label>
+        <input id="task-duration-value-{{id}}" type="number" min="0" max="50" value="{{duration}}" class="text_pole widthUnset">
+        <small>(0 = no delay)</small>
+    </div>
+    {{#if hasDuration}}
+    <div class="objective_block marginBottom10" id="task-duration-progress-{{id}}">
+        <strong>Current progress:</strong> {{elapsedMessages}}/{{duration}} messages
+        {{#if isComplete}}<span class="task-duration-progress-complete"> (Complete)</span>{{/if}}
+    </div>
+    {{/if}}
+    {{#if hasDuration}}
+    <div class="objective_block flex-container flexWrap">
+        <input id="task-duration-reset-{{id}}" class="menu_button" type="button" value="Reset Progress">
+    </div>
+    {{/if}}
+</div>

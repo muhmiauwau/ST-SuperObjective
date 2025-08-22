@@ -1,0 +1,28 @@
+<div class="objective_statistics_modal">
+    <h3 class="stats-header">Upcoming Tasks</h3>
+    
+    <div class="stats-container">
+        <div class="stats-section">
+            <h4 class="stats-section-header">Task Queue</h4>
+            <p>These tasks are included in the AI's context when "Include upcoming tasks in prompt" is enabled.</p>
+            
+            <div class="objective_completion_history">
+                <ul class="objective_history_list">
+                    {{#each tasks}}
+                    <li class="objective_history_item">
+                        <div class="objective_history_task">{{description}}</div>
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="stats-section">
+            <h4 class="stats-section-header">Actions</h4>
+            <p>Clearing upcoming tasks will remove them from the prompt context.</p>
+            <div class="flex-container justifyCenter marginTop10">
+                <button id="upcoming-tasks-purge" class="menu_button">Purge All Upcoming Tasks</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+<div class="objective_statistics_modal">
+    <h3 class="stats-header">Task Statistics</h3>
+    
+    <div class="stats-container">
+        <div class="stats-section justifyCenter">
+            <h4 class="stats-section-header">Current Objective</h4>
+            <div class="stats-grid">
+                <div class="stats-label">Total Tasks:</div>
+                <div class="stats-value">{{totalTasks}}</div>
+                
+                <div class="stats-label">Completed Tasks:</div>
+                <div class="stats-value">{{completedTasks}}</div>
+                
+                <div class="stats-label">Completion Rate:</div>
+                <div class="stats-value">{{completionRate}}%</div>
+            </div>
+        </div>
+        
+        <div class="stats-section justifyCenter">
+            <h4 class="stats-section-header">Current Chat Statistics</h4>
+            <div class="stats-grid">
+                <div class="stats-label">Tasks Completed:</div>
+                <div class="stats-value">{{chatStats.tasksCompleted}}</div>
+                
+                <div class="stats-label">Objectives Completed:</div>
+                <div class="stats-value">{{chatStats.objectivesCompleted}}</div>
+                
+                <div class="stats-label">Last Completion:</div>
+                <div class="stats-value">{{lastCompletionText}}</div>
+            </div>
+        </div>
+        
+        <div class="stats-section justifyCenter">
+            <h4 class="stats-section-header">Global Statistics</h4>
+            <div class="stats-grid">
+                <div class="stats-label">Total Tasks Completed:</div>
+                <div class="stats-value">{{globalStats.tasksCompleted}}</div>
+                
+                <div class="stats-label">Total Objectives Completed:</div>
+                <div class="stats-value">{{globalStats.objectivesCompleted}}</div>
+                
+                <div class="stats-label">Total Tasks Created:</div>
+                <div class="stats-value">{{globalStats.tasksCreated}}</div>
+                
+                <div class="stats-label">Last Completion:</div>
+                <div class="stats-value">{{globalLastCompletionText}}</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stats-section completion-history-section">
+        <h4 class="stats-section-header">Recent Completions</h4>
+        <div class="objective_completion_history">
+            {{{completionHistoryHtml}}}
+        </div>
+    </div>
+</div>
