@@ -18,6 +18,11 @@ import { SlashCommand } from '../../../slash-commands/SlashCommand.js';
 const MODULE_NAME = 'SuperObjective';
 
 
+
+function deMuh(){
+    console.log("muh:", ...arguments)
+}
+
 let taskTree = null;
 let currentChatId = '';
 let currentObjective = null;
@@ -1387,6 +1392,7 @@ function resetState() {
     updateCompletedTasksCount();
     updateUpcomingTasksCount();
     loadSettings();
+    updatePersonContentsVisibility();
 }
 
 //
@@ -1396,6 +1402,7 @@ function saveState() {
     if (currentChatId == '') {
         currentChatId = context.chatId;
     }
+
 
     chat_metadata['objective'] = {
         currentObjectiveId: currentObjective.id,
@@ -1418,6 +1425,40 @@ function saveState() {
     };
 
     saveMetadataDebounced();
+}
+
+// Save UI state to localStorage
+function saveUIState() {
+    const settingsExpanded = $('#superobjectiveSettingsBlockToggle').hasClass('active');
+    const isPopoutOpen = $('#objectiveExtensionPopout').length > 0;
+    
+    localStorage.setItem('superObjective_settingsExpanded', settingsExpanded.toString());
+    localStorage.setItem('superObjective_isPopoutOpen', isPopoutOpen.toString());
+}
+
+// Load UI state from localStorage
+function loadUIState() {
+    const settingsExpanded = localStorage.getItem('superObjective_settingsExpanded') === 'true';
+    const isPopoutOpen = localStorage.getItem('superObjective_isPopoutOpen') === 'true';
+    
+    // Restore settings panel state
+    if (settingsExpanded) {
+        $('#superobjectiveSettingsBlock').show();
+        $('#superobjectiveSettingsBlockToggle').addClass('active');
+    } else {
+        $('#superobjectiveSettingsBlock').hide();
+        $('#superobjectiveSettingsBlockToggle').removeClass('active');
+    }
+    
+    // Restore popout state
+    if (isPopoutOpen && $('#objectiveExtensionPopout').length === 0) {
+        setTimeout(() => {
+            const popoutButton = $('#objectiveExtensionPopoutButton');
+            if (popoutButton.length > 0) {
+                popoutButton.trigger('click');
+            }
+        }, 100);
+    }
 }
 
 // Dump core state
@@ -1857,6 +1898,9 @@ function loadSettings() {
     updateUiTaskList();
     updateCompletedTasksCount();
     updateUpcomingTasksCount();
+
+    // Load UI state from localStorage
+    loadUIState();
 }
 
 function addManualTaskCheckUi() {
@@ -1904,6 +1948,9 @@ function doPopout(e) {
         $('#objectiveExtensionPopout').css('display', 'flex').fadeIn(animation_duration);
         dragElement(newElement);
 
+        // Save popout opened state to localStorage
+        saveUIState();
+
         //setup listener for close button to restore extensions menu
         $('#objectiveExtensionPopoutClose').off('click').on('click', function () {
             $('#objectiveExtensionDrawerContents').removeClass('scrollY');
@@ -1913,6 +1960,8 @@ function doPopout(e) {
                 originalElement.append(objectivePopoutHTML);
                 $('#objectiveExtensionPopout').remove();
             });
+            // Save popout state after closing to localStorage
+            saveUIState();
             loadSettings();
         });
     } else {
@@ -2911,6 +2960,50 @@ function onInjectionFrequencyInput() {
     saveState();
 }
 
+// Show person-specific UI only when a chat is active
+function updatePersonContentsVisibility() {
+     console.log("muh", "updatePersonContentsVisibility")
+    try {
+        const context = getContext();
+        const chatId = context && context.chatId ? context.chatId : null;
+        const hasCharacter = !!(context && (context.character || context.selectedCharacter || context.char));
+        
+        // Check if this is the welcome chat (various ways SillyTavern might identify it)
+        const isWelcomeChat = !!(
+            !chatId || 
+            chatId === 'no-chat-id' || 
+            chatId === 'undefined' ||
+            chatId === '' ||
+            (context && context.chatId && context.chatId.toString().toLowerCase().includes('welcome')) ||
+            (context && context.name && context.name.toLowerCase().includes('welcome')) ||
+            (context && !context.characters || (Array.isArray(context.characters) && context.characters.length === 0))
+        );
+
+        
+
+        console.log("muh", "updatePersonContentsVisibility",isWelcomeChat)
+
+        // If there's no proper chat, no character, or it's the welcome chat, show message
+        if (isWelcomeChat || !hasCharacter) {
+            $('#objectiveExtensionPersonContents').hide();
+            $('#objective-no-chat-message').show();
+
+            // If context may not be ready yet, retry a few times shortly after load
+            if (updatePersonContentsVisibility._retries === undefined) updatePersonContentsVisibility._retries = 0;
+            if (updatePersonContentsVisibility._retries < 5) {
+                updatePersonContentsVisibility._retries++;
+                setTimeout(updatePersonContentsVisibility, 300);
+            }
+        } else {
+            updatePersonContentsVisibility._retries = 0;
+            $('#objective-no-chat-message').hide();
+            $('#objectiveExtensionPersonContents').show();
+        }
+    } catch (e) {
+        console.warn('Failed to update person contents visibility', e);
+    }
+}
+
 // Add our jQuery initialization code
 jQuery(async () => {
     const settingsHtml = await renderExtensionTemplateAsync('third-party/ST-SuperObjective', 'settings');
@@ -2953,6 +3046,9 @@ jQuery(async () => {
             container.slideDown(150);
             $(this).addClass('active');
         }
+        
+        // Save the settings panel state to localStorage
+        saveUIState();
     });
 
     // Ensure parent button is hidden on first load
@@ -2964,6 +3060,7 @@ jQuery(async () => {
         resetState();
         loadSettings();
         updateUiTaskList();
+        updatePersonContentsVisibility();
     });
     eventSource.on(event_types.MESSAGE_SWIPED, () => {
         lastMessageWasSwipe = true;
