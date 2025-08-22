@@ -2962,12 +2962,18 @@ function onInjectionFrequencyInput() {
 
 // Show person-specific UI only when a chat is active
 function updatePersonContentsVisibility() {
-     console.log("muh", "updatePersonContentsVisibility")
+     deMuh( "updatePersonContentsVisibility", updatePersonContentsVisibility._retries)
     try {
         const context = getContext();
         const chatId = context && context.chatId ? context.chatId : null;
-        const hasCharacter = !!(context && (context.character || context.selectedCharacter || context.char));
-        
+       
+        const character = context.characters[context.characterId];
+
+        deMuh(character)
+
+        const hasCharacter = !!(context && character);
+
+
         // Check if this is the welcome chat (various ways SillyTavern might identify it)
         const isWelcomeChat = !!(
             !chatId || 
@@ -2981,7 +2987,7 @@ function updatePersonContentsVisibility() {
 
         
 
-        console.log("muh", "updatePersonContentsVisibility",isWelcomeChat)
+        deMuh("updatePersonContentsVisibility",isWelcomeChat, hasCharacter, context)
 
         // If there's no proper chat, no character, or it's the welcome chat, show message
         if (isWelcomeChat || !hasCharacter) {
