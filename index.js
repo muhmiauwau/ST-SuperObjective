@@ -1,3 +1,5 @@
+const { lodash } = SillyTavern.libs;
+const _ = lodash
 import { chat_metadata, saveSettingsDebounced, is_send_press, extension_prompt_types, extension_prompt_roles } from '../../../../script.js';
 import { getContext, extension_settings, saveMetadataDebounced, renderExtensionTemplateAsync } from '../../../extensions.js';
 import {
@@ -18,6 +20,7 @@ import { SlashCommand } from '../../../slash-commands/SlashCommand.js';
 const MODULE_NAME = 'ST-SuperObjective';
 const Ext_MODULE_NAME = 'third-party/ST-SuperObjective';
 
+import { updatePersonContentsVisibility } from './src/splitObjective.js';
 
 
 function deMuh(){
@@ -1338,7 +1341,6 @@ function resetState() {
     updateCompletedTasksCount();
     updateUpcomingTasksCount();
     loadSettings();
-    updatePersonContentsVisibility();
 }
 
 //
@@ -2806,53 +2808,10 @@ function onInjectionFrequencyInput() {
     saveState();
 }
 
-// Show person-specific UI only when a chat is active
-function updatePersonContentsVisibility() {
-    try {
-        const context = getContext();
-        const chatId = context && context.chatId ? context.chatId : null;
-       
-        const character = context.characters[context.characterId];
-
-        const hasCharacter = !!(context && character);
-
-
-        // Check if this is the welcome chat (various ways SillyTavern might identify it)
-        const isWelcomeChat = !!(
-            !chatId || 
-            chatId === 'no-chat-id' || 
-            chatId === 'undefined' ||
-            chatId === '' ||
-            (context && context.chatId && context.chatId.toString().toLowerCase().includes('welcome')) ||
-            (context && context.name && context.name.toLowerCase().includes('welcome')) ||
-            (context && !context.characters || (Array.isArray(context.characters) && context.characters.length === 0))
-        );
-
-        
-
-        // If there's no proper chat, no character, or it's the welcome chat, show message
-        if (isWelcomeChat || !hasCharacter) {
-            $('#objectiveExtensionPersonContents').hide();
-            $('#objective-no-chat-message').show();
-
-            // If context may not be ready yet, retry a few times shortly after load
-            if (updatePersonContentsVisibility._retries === undefined) updatePersonContentsVisibility._retries = 0;
-            if (updatePersonContentsVisibility._retries < 5) {
-                updatePersonContentsVisibility._retries++;
-                setTimeout(updatePersonContentsVisibility, 300);
-            }
-        } else {
-            updatePersonContentsVisibility._retries = 0;
-            $('#objective-no-chat-message').hide();
-            $('#objectiveExtensionPersonContents').show();
-        }
-    } catch (e) {
-        console.warn('Failed to update person contents visibility', e);
-    }
-}
 
 // Add our jQuery initialization code
 jQuery(async () => {
+   
     const settingsHtml = await renderExtensionTemplateAsync('third-party/ST-SuperObjective', 'settings');
 
     // CSS styles are now defined in style.css
@@ -2903,12 +2862,22 @@ jQuery(async () => {
 
     loadSettings();
 
+    setTimeout(() => { 
+        deMuh("setTimeout", $(".recentChat:first-child"))
+        $(".recentChat:first-child").click()
+    }, 2000);
+
+
+
     eventSource.on(event_types.CHAT_CHANGED, () => {
+         deMuh("chatChangedEvent")
         resetState();
         loadSettings();
         updateUiTaskList();
         updatePersonContentsVisibility();
-    });
+
+    })
+
     eventSource.on(event_types.MESSAGE_SWIPED, () => {
         lastMessageWasSwipe = true;
     });

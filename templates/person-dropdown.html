@@ -1,0 +1,7 @@
+<label for="objective-person-select"><small>Person</small></label>
+<select id="objective-person-select" class="text_pole">
+    <option value="" disabled>Select person...</option>
+    {{#each dropdown}}
+    <option value="{{name}}"  {{#if selected }} selected{{/if}}>{{name}}</option>
+    {{/each}}
+</select>
