@@ -10,10 +10,14 @@ function deMuh(){
     console.log("muh:", ...arguments)
 }
 
+const MODULE_NAME = 'ST-SuperObjective';
+const Ext_MODULE_NAME = 'third-party/ST-SuperObjective';
+
+
 
 let persons = []
 
-export function updatePersonContentsVisibility() {
+export async function updatePersonContentsVisibility() {
     
     deMuh("updatePersonContentsVisibility")
 
@@ -49,6 +53,8 @@ export function updatePersonContentsVisibility() {
 
     } else {
         $('#objective-no-chat-message').hide();
+        const template = await renderExtensionTemplateAsync(Ext_MODULE_NAME, 'templates/person-contents', {});
+        $('#objectiveExtensionPersonContents').html(template);
         $('#objectiveExtensionPersonContents').show();
     
 

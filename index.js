@@ -472,6 +472,7 @@ function setCurrentTask(taskId = null, skipSave = false) {
             // Get the prompt role from settings (default to SYSTEM if not set)
             const promptRole = chat_metadata.objective.promptRole || extension_prompt_roles.SYSTEM;
 
+            deMuh("----", context.currentSpeaker)
             // Update the extension prompt
             context.setExtensionPrompt(
                 MODULE_NAME,
